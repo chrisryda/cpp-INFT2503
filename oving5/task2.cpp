@@ -105,21 +105,20 @@ public:
 	}
 
 	void draw_board() {
-			cout << "   A  B  C  D  E  F  G  H " << endl;
-			for (int x = 0; x < 8; x++) {
-				cout << (x + 1) << " ";
-				for (int y = 0; y < 8; y++) {
-					if (squares[y][x]) {
-						cout << " " << squares[y][x] -> symbol_string() << " ";
-					} else if ((x + y) % 2 == 0) {
-						cout << "▒▒▒";
-					} else {
-						cout << "░░░";
-					}
-
+		cout << "   A  B  C  D  E  F  G  H " << endl;
+		for (int x = 0; x < 8; x++) {
+			cout << (x + 1) << " ";
+			for (int y = 0; y < 8; y++) {
+				if (squares[y][x]) {
+					cout << " " << squares[y][x] -> symbol_string() << " ";
+				} else if ((x + y) % 2 == 0) {
+					cout << "▒▒▒";
+				} else {
+					cout << "░░░";
 				}
-				cout << endl;
 			}
+			cout << endl;
+		}
 	}
 
 	// 8x8 squares occupied by 1 or 0 chess pieces
