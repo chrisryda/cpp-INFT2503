@@ -260,6 +260,7 @@ public:
                 }
                 cout << endl;
             }
+            cout << "\n" << endl;
         };
     }
     
