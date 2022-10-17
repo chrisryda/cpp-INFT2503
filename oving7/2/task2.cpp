@@ -7,11 +7,11 @@ using namespace std;
 int main () 
 {   
     Set empty_set1; 
-    empty_set1.print();
+    empty_set1.print("empty_set1: ");
 
     Set empty_set2;
     empty_set2.create_empty_set();
-    empty_set2.print();
+    empty_set2.print("empty_set2: ");
 
     Set set1({9, 2, 4, 13, 27});
     set1.print("set1: ");
@@ -27,6 +27,6 @@ int main ()
     set1.add_number_to_set(99);
     set1.print("set1 after adding 99 to it: ");
 
-    set1 = empty_set1;
-    set1.print();
+    set1 = set2;
+    set1.print("set1 after setting it equal to set2: ");
 }

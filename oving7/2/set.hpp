@@ -11,8 +11,7 @@ public:
     Set();
     Set(std::vector<int> set);
     Set(const Set &) = default;
-    
-    void print() const;
+
     void print(const std::string &text) const;
     std::vector<int> get_set() const;
     void create_set(std::vector<int> set_);
