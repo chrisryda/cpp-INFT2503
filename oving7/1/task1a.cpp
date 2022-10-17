@@ -11,13 +11,10 @@ void print(const string &text, const Fraction &fraction)
 
 int main()
 {
-	Fraction fraction1(25, 5);
-	Fraction fraction_result1;
-	fraction_result1 = fraction1 - 3;
-	print("25/5 - 3 = ", fraction_result1);
+	Fraction fraction1(30, 5);
+	Fraction result1 = fraction1 - 5;
+	print("30/5 - 5 = ", result1);
 
-	Fraction fraction_result2;
-	fraction_result2 = 3 - fraction1;
-	print("3 - 25/5 = ", fraction_result2);
-
+	Fraction result2 = 5 - fraction1;
+	print("5 - 30/5 = ", result2);
 }
