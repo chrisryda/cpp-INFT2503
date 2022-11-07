@@ -135,6 +135,8 @@ public:
 	Ground ground;
 	Sphere ground_sphere, falling_sphere;
 	std::vector<Cube> cubes;
+	btVector3 falling_sphere_offset = btVector3(0., 0., 0.);
+  	bool simulating = false;
 
 	World() : dispatcher(&collision_configuration),
 			  dynamics(&dispatcher, &broadphase, &solver, &collision_configuration),
@@ -149,6 +151,12 @@ public:
 		for (auto &cube : cubes) {
 			dynamics.addRigidBody(&cube.body);
 		}
+
+        restart();
+	}
+
+	void restart() 
+	{
 		btTransform transform;
 
 		// Position ground
@@ -160,7 +168,11 @@ public:
 		transform.setOrigin(btVector3(1.0, 0.1, 0.0));
 		ground_sphere.body.setCenterOfMassTransform(transform);
 
-		transform.setOrigin(btVector3(0.9, 3.0, 0.0));
+		transform.setOrigin(btVector3(
+            0.9 + falling_sphere_offset.x(),
+            3.0 + falling_sphere_offset.y(),
+            0.0
+        ));
 		falling_sphere.body.setCenterOfMassTransform(transform);
 
 		// Position cubes
@@ -176,7 +188,47 @@ public:
 		cubes[4].body.setCenterOfMassTransform(transform);
 		transform.setOrigin(btVector3(-1.0, 0.5, 0.0));
 		cubes[5].body.setCenterOfMassTransform(transform);
+
+		// Reset forces
+		resetBody(ground.body);
+		resetBody(ground_sphere.body);
+		resetBody(falling_sphere.body);
+		for (auto &cube : cubes)
+		resetBody(cube.body);
+
+		simulating = false;
 	}
+
+	static void resetBody(btRigidBody& body) 
+	{
+		body.setLinearVelocity(btVector3(0., 0., 0.));
+		body.setAngularVelocity(btVector3(0., 0., 0.));
+	}
+
+	void set_sphere_offset_hor(double offset) 
+	{
+		falling_sphere_offset.setX(offset);
+		restart();
+	}
+
+	void set_sphere_offset_vert(double offset) 
+	{
+		falling_sphere_offset.setY(offset);
+		restart();
+	}
+
+	void step_physics(float deltaTime) 
+	{
+		if (this->simulating) 
+		{ 
+			dynamics.stepSimulation(deltaTime);
+		}
+  	}
+
+    void set_simulating(bool simulating) 
+    {
+        this->simulating = simulating;
+    }
 
 	void draw()
 	{
@@ -268,21 +320,21 @@ public:
 			ImGui::Begin("ImGui");
 			if (ImGui::Button("Restart game"))
 			{
-				// Implementation needed
+				world.restart();
 			}
 			if (ImGui::Button("Drop ball"))
 			{
-				// Implementation needed
+				world.set_simulating(true);
 			}
 			float horizontal_position;
-			if (ImGui::SliderFloat("Horizontal ball position", &horizontal_position, 0.0, 10.0))
+			if (ImGui::SliderFloat("Horizontal ball position", &horizontal_position, -1.0, 2.3))
 			{
-				// Implementation needed
+				world.set_sphere_offset_hor(horizontal_position);
 			}
 			float vertical_position;
-			if (ImGui::VSliderFloat("Vertical ball position", {20, 100}, &vertical_position, 0.0, 10.0))
+			if (ImGui::VSliderFloat("Vertical ball position", {20, 100}, &vertical_position, -2.5, 0.3))
 			{
-				// Implementation needed
+				world.set_sphere_offset_vert(vertical_position);
 			}
 			ImGui::End();
 
@@ -295,7 +347,7 @@ public:
 					  0.0, 1.0, 0.0);				// Up
 
 			auto time = std::chrono::system_clock::now();
-			world.dynamics.stepSimulation(std::chrono::duration<float>(time - last_time).count());
+            world.step_physics(std::chrono::duration<float>(time - last_time).count());
 			last_time = time;
 
 			world.draw();
